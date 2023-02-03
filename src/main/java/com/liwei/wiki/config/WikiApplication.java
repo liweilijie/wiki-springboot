@@ -1,11 +1,14 @@
-package com.liwei.wiki;
+package com.liwei.wiki.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
 
+//@ComponentScan({"com.liwei", "com.test"}) // 扩大扫描的路径,增加多个包路径
+@ComponentScan("com.liwei") // 扩大扫描的路径
 @SpringBootApplication
 public class WikiApplication {
 	private static final Logger log = LoggerFactory.getLogger(WikiApplication.class);
