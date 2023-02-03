@@ -43,3 +43,9 @@ mybatis-generator:
 - domain/DemoExample.java
 - mapper/DemoMapper.java
 - resources/mapper/DemoMapper.xml
+
+
+## from
+参考的一些文档知识:
+
+- [https://github.com/yubinCloud/fairy-wiki](https://github.com/yubinCloud/fairy-wiki)
