@@ -1,3 +1,5 @@
+create database wiki default character set utf8mb4 collate utf8mb4_general_ci;
+
 drop table if exists `test`;
 create table `test` (
     `id` bigint not null comment 'id',
