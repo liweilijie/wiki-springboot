@@ -35,3 +35,11 @@ private static final Logger LOG = LoggerFactory.getLogger($CLASSNAME$.class);
 
 ### application.properties
 配置 **springboot**  里面有 config/application.properties 也可以自动识别，或者 yaml 格式也可以的.
+
+mybatis-generator:
+配置在pom.xml 和 resources/generator/generator-config.xml 配置好之后,
+使用generator -e 会自动解析并且生成代码文件:
+- domain/Demo.java
+- domain/DemoExample.java
+- mapper/DemoMapper.java
+- resources/mapper/DemoMapper.xml
