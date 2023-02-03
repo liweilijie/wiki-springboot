@@ -9,3 +9,8 @@ Content-Type: application/x-www-form-urlencoded
 name=liwei
 
 ###
+
+GET http://127.0.0.1:8880/test/list
+Accept: application/json
+
+###
