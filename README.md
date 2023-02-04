@@ -55,6 +55,10 @@ npm config set registry http://registry.npm.taobao.org
 npm install -g @vue/cli
 # 查看是否安装好
 vue --version
+# 创建一个vue 项目
+vue create web
+# 安装ant design vue 框架
+npm -i ant-design-vue --save
 ```
 **vue create web**:
 - 手动创建
@@ -67,6 +71,15 @@ vue --version
 - lint on save 保存的时候才检查 代码.
 - config Babel, ESLint是否单独用配置文件,选择: 单独的
 - 保存成模板
+
+```js
+// 完整引入ant-design-vue 
+import Antd from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
+// 引入 之后需要use
+app.use(Antd);
+```
+
 
 ## from
 参考的一些文档知识:
