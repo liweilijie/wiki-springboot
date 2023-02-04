@@ -59,6 +59,8 @@ vue --version
 vue create web
 # 安装ant design vue 框架
 npm -i ant-design-vue --save
+# 安装axios
+npm install axios --save
 ```
 **vue create web**:
 - 手动创建
