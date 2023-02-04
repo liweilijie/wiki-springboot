@@ -45,6 +45,29 @@ mybatis-generator:
 - resources/mapper/DemoMapper.xml
 
 
+## 前端 
+
+安装好**node**, 然后安装`vue-cli`
+```bash
+# 设置registry 淘宝镜像
+npm get registry
+npm config set registry http://registry.npm.taobao.org
+npm install -g @vue/cli
+# 查看是否安装好
+vue --version
+```
+**vue create web**:
+- 手动创建
+- 选择Babel,typescript, router, vuex, linter/formatter
+- 3.x
+- 是否需要用class-style风格: 不需要
+- 是否用Babel来配合typescript: 不需要
+- history mode for router? 意思是路由地址栏包含#号,我们选择:需要
+- ESLint的校验规则,选择error only 最简单的方式.
+- lint on save 保存的时候才检查 代码.
+- config Babel, ESLint是否单独用配置文件,选择: 单独的
+- 保存成模板
+
 ## from
 参考的一些文档知识:
 
