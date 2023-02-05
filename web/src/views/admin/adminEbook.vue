@@ -13,7 +13,7 @@
         >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'cover'">
-            <img :src="record.cover" alt="avatar" />
+            <img :src="record.cover" alt="avatar" height="20" width="20" />
           </template>
           <template v-else-if="column.key === 'action'">
             <a-space size="small">
@@ -42,7 +42,7 @@ export default defineComponent({
     const ebooks = ref();
     const pagination = ref({
       current: 1,
-      pageSize: 2,
+      pageSize: 4,
       total: 0
     });
     const loading = ref(false);
@@ -88,13 +88,19 @@ export default defineComponent({
      */
     const handleQuery = (params: any) => {
       loading.value = true;
-      axios.get("/ebook/list", params).then((response) => {
+      axios.get("/ebook/list", {
+        params: {
+          page: params.page,
+          size: params.size
+        }
+      }).then((response) => {
         loading.value = false;
         const data = response.data;
-        ebooks.value = data.content;
+        ebooks.value = data.content.list;
 
         // 重置分布按钮
         pagination.value.current = params.page;
+        pagination.value.total = data.content.total;
       })
     };
 
@@ -110,7 +116,10 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({}); // 初始的时候查询一次内容
+      handleQuery({
+        page: 1,
+        size: pagination.value.pageSize
+      }); // 初始的时候查询一次内容
     });
 
     return {
