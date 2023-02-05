@@ -86,6 +86,22 @@ app.use(Antd);
 - 右击`web/package.json`, 选择 `show npm scripts`.
 - 在左侧会显示 `serve,build,lint` 等脚本命令，将这个菜单栏拖到右侧和 `Database` 一起，每次启动都可以双击一下 serve 它自动会重启。
 
+```bash
+# 下载antd icon 库
+npm install --save @ant-design/icons-vue
+```
+
+在 `main.ts` 之中加载所有图标。
+```js
+import * as Icons from '@ant-design/icons-vue';
+
+// 全局使用图标
+const icons: any = Icons;
+for (const i in icons) {
+    app.component(i, icons[i]);
+}
+```
+
 
 ## from
 参考的一些文档知识:
