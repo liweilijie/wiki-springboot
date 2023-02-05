@@ -11,18 +11,20 @@
         :loading="loading"
         @change="handleTableChange"
         >
-        <template #cover="{ text: cover }">
-          <img v-if="cover" :src="cover" alt="avatar" />
-        </template>
-        <template v-slot:action="{ text, record }">
-          <a-space size="small">
-            <a-button type="primary">
-              编辑
-            </a-button>
-            <a-button type="danger">
-              删除
-            </a-button>
-          </a-space>
+        <template #bodyCell="{ column, record }">
+          <template v-if="column.key === 'cover'">
+            <img :src="record.cover" alt="avatar" />
+          </template>
+          <template v-else-if="column.key === 'action'">
+            <a-space size="small">
+              <a-button type="primary">
+                编辑
+              </a-button>
+              <a-button type="danger">
+                删除
+              </a-button>
+            </a-space>
+          </template>
         </template>
       </a-table>
 
@@ -48,8 +50,8 @@ export default defineComponent({
     const columns = [
       {
         title: '封面',
+        key: 'cover',
         dataIndex: 'cover',
-        slots: { customRender: 'cover' }
       },
       {
         title: '名称',
@@ -78,7 +80,6 @@ export default defineComponent({
       {
         title: 'Action',
         key: 'action',
-        slots: { customRender: 'action' }
       }
     ];
 

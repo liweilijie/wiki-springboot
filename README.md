@@ -27,7 +27,7 @@ Accept: application/json
 
 将`CLASSNAME` 映射到 `classname()`即可。
 ```java
-private static final Logger LOG = LoggerFactory.getLogger($CLASSNAME$.class); 
+private static final Logger log = LoggerFactory.getLogger($CLASSNAME$.class); 
 ```
 
 ### log
