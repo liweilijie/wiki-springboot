@@ -83,11 +83,8 @@ const actions: Record<string, string>[] = [
 export default defineComponent({
   name: 'HomeView',
   setup() {
-    console.log("setup");
-
     onMounted(() => {
       axios.get("/ebook/list").then((response) => {
-        console.log(response);
         ebooks.value = response.data.content;
       })
     });
