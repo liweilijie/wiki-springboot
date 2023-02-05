@@ -7,6 +7,7 @@ import com.liwei.wiki.domain.EbookExample;
 import com.liwei.wiki.mapper.EbookMapper;
 import com.liwei.wiki.req.EbookReq;
 import com.liwei.wiki.resp.EbookResp;
+import com.liwei.wiki.resp.PageResp;
 import com.liwei.wiki.util.CopyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +25,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public List<EbookResp> list(EbookReq req) {
+    public PageResp<EbookResp> list(EbookReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         // 如果有 name 条件查询则进行 like 查询
@@ -34,7 +35,7 @@ public class EbookService {
         // PageHelper分页注意事项:
         // 第一页从1开始
         // 并且只能第一个遇到的查询语句生效. 所以紧跟查询语句
-        PageHelper.startPage(1, 3);
+        PageHelper.startPage(req.getPage(), req.getSize());
         List<Ebook> ebookList = ebookMapper.selectByExample(ebookExample);
 
         PageInfo<Ebook> pageInfo = new PageInfo<>(ebookList);
@@ -57,7 +58,10 @@ public class EbookService {
 
         // 列表复制
         List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
+        PageResp<EbookResp> ebooksResp = new PageResp<>();
+        ebooksResp.setTotal(pageInfo.getTotal());
+        ebooksResp.setList(list);
 
-        return list;
+        return ebooksResp;
     }
 }
