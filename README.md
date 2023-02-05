@@ -82,6 +82,10 @@ import 'ant-design-vue/dist/antd.css';
 app.use(Antd);
 ```
 
+**idea**来启动 `npm serve`:
+- 右击`web/package.json`, 选择 `show npm scripts`.
+- 在左侧会显示 `serve,build,lint` 等脚本命令，将这个菜单栏拖到右侧和 `Database` 一起，每次启动都可以双击一下 serve 它自动会重启。
+
 
 ## from
 参考的一些文档知识:
