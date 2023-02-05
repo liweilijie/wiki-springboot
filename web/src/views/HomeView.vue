@@ -86,7 +86,7 @@ export default defineComponent({
     console.log("setup");
 
     onMounted(() => {
-      axios.get(process.env.VUE_APP_SERVER + "/ebook/list").then((response) => {
+      axios.get("/ebook/list").then((response) => {
         console.log(response);
         ebooks.value = response.data.content;
       })
