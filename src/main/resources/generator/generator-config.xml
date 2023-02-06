@@ -22,7 +22,7 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://home.emacsvi.com:3306/wiki?serverTimezone=Asia/Shanghai"
+                        connectionURL="jdbc:mysql://dev:3306/wikidev?serverTimezone=Asia/Shanghai"
                         userId="wiki"
                         password="Wiki%1022">
         </jdbcConnection>
@@ -41,8 +41,8 @@
                              type="XMLMAPPER"/>
 
 <!--        <table tableName="demo" domainObjectName="Demo"/>-->
-        <table tableName="ebook"/>
-        <!--<table tableName="category"/>-->
+<!--        <table tableName="ebook"/>-->
+        <table tableName="category"/>
         <!--<table tableName="doc"/>-->
         <!--<table tableName="content"/>-->
         <!--<table tableName="user"/>-->

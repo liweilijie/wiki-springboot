@@ -44,6 +44,8 @@ mybatis-generator:
 - mapper/DemoMapper.java
 - resources/mapper/DemoMapper.xml
 
+创建一个运行的配置，选择 **maven**, 然后`run`里面配置： `mybatis-generator:generate -e` 名称随便写，即可自动生成。
+
 
 ## 前端 
 

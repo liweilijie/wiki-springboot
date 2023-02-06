@@ -8,7 +8,7 @@
           :model="param"
       >
         <a-form-item>
-          <a-input v-model:value="param.name" placeholder="电子书名称">
+          <a-input v-model:value="param.name" placeholder="电子书名称" @keyup.enter="handleQuery({page: 1, size: pagination.pageSize})" >
             <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
           </a-input>
         </a-form-item>
