@@ -113,6 +113,11 @@ export default defineComponent({
         title: '排序',
         key: 'sort',
         dataIndex: 'sort'
+      },
+      {
+        title: 'Action',
+        key: 'action',
+        dataIndex: 'action'
       }
     ];
 
