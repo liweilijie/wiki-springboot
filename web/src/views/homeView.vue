@@ -71,6 +71,7 @@
 
 <script lang="ts">
 import {defineComponent, onMounted, ref } from 'vue';
+import {message} from 'ant-design-vue';
 import axios from 'axios';
 const ebooks = ref();
 
@@ -91,7 +92,12 @@ export default defineComponent({
           size: 1000
         }
       }).then((response) => {
-        ebooks.value = response.data.content.list;
+        let data = response.data;
+        if (data.success) {
+          ebooks.value = response.data.content.list;
+        } else {
+          message.error(data.message);
+        }
       })
     });
 
