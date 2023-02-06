@@ -72,13 +72,14 @@
         <a-input v-model:value="ebook.name" />
       </a-form-item>
       <a-form-item label="分类一">
-        <a-input v-model:value="ebook.category1Id" />
-      </a-form-item>
-      <a-form-item label="分类二">
-        <a-input v-model:value="ebook.category2Id" />
+        <a-cascader
+            v-model:value="categoryIds"
+            :field-names="{ value: 'id', label: 'name', children: 'children' }"
+            :options="level1"
+        />
       </a-form-item>
       <a-form-item label="描述">
-        <a-input v-model:value="ebook.description" type="text" />
+        <a-input v-model:value="ebook.description" type="textarea" />
       </a-form-item>
     </a-form>
   </a-modal>
@@ -145,6 +146,33 @@ export default defineComponent({
     ];
 
     /**
+     * 数组，[100, 101]对应：前端开发 / Vue
+     */
+    const categoryIds = ref();
+    const level1 = ref();
+    let categorys: any;
+    /**
+     * 数据查询
+     */
+    const handleQueryCategorys = () => {
+      loading.value = true;
+      axios.get("/category/all").then((response) => {
+        loading.value = false;
+        const data = response.data;
+        if (data.success) {
+          categorys = data.content;
+          console.log("原始数组:", categorys);
+
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys, 0);
+          console.log("树形结构:", level1);
+        } else {
+          message.error(data.message);
+        }
+      })
+    };
+
+    /**
      * 数据查询
      */
     const handleQuery = (params: any) => {
@@ -183,11 +211,15 @@ export default defineComponent({
     };
 
     // ------------- 表单 ----------------
-    const ebook = ref({});
+    const ebook = ref();
     const modalVisible = ref(false);
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
+      // 拆分分类
+      ebook.value.category1Id = categoryIds.value[0];
+      ebook.value.category2Id = categoryIds.value[1];
+      console.log('save ebook:', ebook.value);
       axios.post("/ebook/save", ebook.value).then((response) => {
         modalLoading.value = false;
         const data = response.data;
@@ -204,6 +236,7 @@ export default defineComponent({
         }
       });
     };
+
     /**
      * 编辑
      */
@@ -211,6 +244,9 @@ export default defineComponent({
       modalVisible.value = true;
       // 在编辑的时候"复制对象"出来编辑，这样才不会影响响应式数据
       ebook.value = Tool.copy(record);
+      console.log('ebook:', ebook.value);
+      categoryIds.value = [ebook.value.category1Id, ebook.value.category2Id];
+      console.log('当前ids:', categoryIds.value);
     };
 
     /**
@@ -237,6 +273,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
+      handleQueryCategorys();
       handleQuery({
         page: 1,
         size: pagination.value.pageSize
@@ -259,7 +296,10 @@ export default defineComponent({
 
       edit,
       add,
-      handleDelete
+      handleDelete,
+
+      categoryIds,
+      level1,
     }
   }
 })
