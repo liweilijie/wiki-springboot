@@ -52,6 +52,9 @@
               </a-popconfirm>
             </a-space>
           </template>
+          <template v-else-if="column.key === 'category'">
+            <span>{{ getCategoryName(record.category1Id) }} / {{ getCategoryName(record.category2Id) }}</span>
+          </template>
         </template>
       </a-table>
 
@@ -71,7 +74,7 @@
       <a-form-item label="名称">
         <a-input v-model:value="ebook.name" />
       </a-form-item>
-      <a-form-item label="分类一">
+      <a-form-item label="分类">
         <a-cascader
             v-model:value="categoryIds"
             :field-names="{ value: 'id', label: 'name', children: 'children' }"
@@ -117,14 +120,8 @@ export default defineComponent({
         dataIndex: 'name'
       },
       {
-        title: '分类一',
-        key: 'category1Id',
-        dataIndex: 'category1Id'
-      },
-      {
-        title: '分类二',
-        key: 'category2Id',
-        dataIndex: 'category2Id'
+        title: '分类',
+        key: 'category'
       },
       {
         title: '文档数',
@@ -150,7 +147,7 @@ export default defineComponent({
      */
     const categoryIds = ref();
     const level1 = ref();
-    let categorys: any;
+    let categorys: any; //内部用的普通变量
     /**
      * 数据查询
      */
@@ -170,6 +167,17 @@ export default defineComponent({
           message.error(data.message);
         }
       })
+    };
+
+    // 由于我们已经获取到所有类型了,所以我们只需要在前端查询就可以
+    const getCategoryName = (cid: number) => {
+      let result = "";
+      categorys.forEach((item: any) => {
+        if (item.id === cid) {
+          result = item.name;
+        }
+      });
+      return result;
     };
 
     /**
@@ -300,6 +308,7 @@ export default defineComponent({
 
       categoryIds,
       level1,
+      getCategoryName
     }
   }
 })
