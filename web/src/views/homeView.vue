@@ -84,6 +84,7 @@ export default defineComponent({
   name: 'HomeView',
   setup() {
     onMounted(() => {
+      // 这里应该用一个 /ebook/all 接口提供所有数据查询更妥当
       axios.get("/ebook/list", {
         params: {
           page: 1,
