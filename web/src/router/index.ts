@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/homeView.vue'
 import AdminEbook from '../views/admin/adminEbook.vue'
+import AdminCategory from '../views/admin/adminCategory.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +21,11 @@ const routes: Array<RouteRecordRaw> = [
     path: '/admin/ebook',
     name: 'ebook',
     component: AdminEbook
+  },
+  {
+    path: '/admin/category',
+    name: 'category',
+    component: AdminCategory
   },
 ]
 
