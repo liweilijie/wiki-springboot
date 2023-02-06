@@ -3,11 +3,26 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <p>
-        <a-button type="primary" @click="add()">
-          新增
-        </a-button>
-      </p>
+      <a-form
+          layout="inline"
+          :model="param"
+      >
+        <a-form-item>
+          <a-input v-model:value="param.name" placeholder="电子书名称">
+            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
+            查询
+          </a-button>
+        </a-form-item>
+        <a-form-item>
+          <a-button type="primary" @click="add()">
+            新增
+          </a-button>
+        </a-form-item>
+      </a-form>
       <a-table
         :columns="columns"
         :row-key="record => record.id"
@@ -73,10 +88,15 @@
 import {defineComponent, onMounted, ref } from "vue";
 import {message} from 'ant-design-vue';
 import axios from 'axios';
+import {Tool} from "@/util/tool";
 
 export default defineComponent({
   name: 'AdminEbook',
   setup() {
+    // param 给查询用的响应式参数
+    const param = ref();
+    param.value = {}; // 初始需要加空对象，不然会报错的。
+
     const ebooks = ref();
     const pagination = ref({
       current: 1,
@@ -132,7 +152,9 @@ export default defineComponent({
       axios.get("/ebook/list", {
         params: {
           page: params.page,
-          size: params.size
+          size: params.size,
+          // 此param是响应式变量查询里面拿过来的，当param有值才会传递，没有值不会传递
+          name: param.value.name
         }
       }).then((response) => {
         loading.value = false;
@@ -187,7 +209,8 @@ export default defineComponent({
      */
     const edit = (record: any) => {
       modalVisible.value = true;
-      ebook.value = record
+      // 在编辑的时候"复制对象"出来编辑，这样才不会影响响应式数据
+      ebook.value = Tool.copy(record);
     };
 
     /**
@@ -221,6 +244,7 @@ export default defineComponent({
     });
 
     return {
+      param,
       ebooks,
       pagination,
       columns,
@@ -231,6 +255,7 @@ export default defineComponent({
       modalLoading,
       modalVisible,
       handleModalOk,
+      handleQuery,
 
       edit,
       add,
