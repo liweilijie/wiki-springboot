@@ -8,12 +8,12 @@
           :model="param"
       >
         <a-form-item>
-          <a-input v-model:value="param.name" placeholder="分类名称" @keyup.enter="handleQuery({page: 1, size: pagination.pageSize})" >
+          <a-input v-model:value="param.name" placeholder="分类名称" @keyup.enter="handleQuery()" >
             <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
           </a-input>
         </a-form-item>
         <a-form-item>
-          <a-button type="primary" @click="handleQuery({page: 1, size: pagination.pageSize})">
+          <a-button type="primary" @click="handleQuery()">
             查询
           </a-button>
         </a-form-item>
@@ -26,10 +26,9 @@
       <a-table
         :columns="columns"
         :row-key="record => record.id"
-        :data-source="categorys"
-        :pagination="pagination"
+        :data-source="level1"
         :loading="loading"
-        @change="handleTableChange"
+        :pagination="false"
         >
         <template #bodyCell="{ column, record }">
           <template v-if="column.key === 'cover'">
@@ -92,11 +91,6 @@ export default defineComponent({
     param.value = {}; // 初始需要加空对象，不然会报错的。
 
     const categorys = ref();
-    const pagination = ref({
-      current: 1,
-      pageSize: 10,
-      total: 0
-    });
     const loading = ref(false);
 
     const columns = [
@@ -122,41 +116,37 @@ export default defineComponent({
     ];
 
     /**
+     * 一级分类树, children属性就是二级分类
+     * [{
+     *   id: "",
+     *   name: "",
+     *   children: [{
+     *     id: "",
+     *     name: "",
+     *   }]
+     * }]
+     */
+    const level1 = ref(); // 一级分类树, children属性就是二级分类
+
+    /**
      * 数据查询
      */
-    const handleQuery = (params: any) => {
+    const handleQuery = () => {
       loading.value = true;
-      axios.get("/category/list", {
-        params: {
-          page: params.page,
-          size: params.size,
-          // 此param是响应式变量查询里面拿过来的，当param有值才会传递，没有值不会传递
-          name: param.value.name
-        }
-      }).then((response) => {
+      axios.get("/category/all").then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
-          categorys.value = data.content.list;
+          categorys.value = data.content;
+          console.log("原始数组:", categorys.value);
 
-          // 重置分布按钮
-          pagination.value.current = params.page;
-          pagination.value.total = data.content.total;
+          level1.value = [];
+          level1.value = Tool.array2Tree(categorys.value, 0);
+          console.log("树形结构:", level1);
         } else {
           message.error(data.message);
         }
       })
-    };
-
-    /**
-     * 表格点击页码时触发
-     */
-    const handleTableChange = (pagination: any) => {
-      console.log("看看自带的分页参数都有啥:" + pagination);
-      handleQuery({
-        page: pagination.current,
-        size: pagination.pageSize
-      });
     };
 
     // ------------- 表单 ----------------
@@ -172,10 +162,7 @@ export default defineComponent({
           modalVisible.value = false;
 
           // 重新加载列表数据
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery();
         } else {
           message.error(data.message);
         }
@@ -203,10 +190,7 @@ export default defineComponent({
         const data = response.data;
         if (data.success) {
           // 重新加载列表数据
-          handleQuery({
-            page: pagination.value.current,
-            size: pagination.value.pageSize,
-          });
+          handleQuery()
         } else {
           message.error(data.message);
         }
@@ -214,19 +198,15 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery({
-        page: 1,
-        size: pagination.value.pageSize
-      }); // 初始的时候查询一次内容
+      handleQuery()
     });
 
     return {
       param,
-      categorys,
-      pagination,
+      // categorys,
+      level1,
       columns,
       loading,
-      handleTableChange,
 
       category,
       modalLoading,
