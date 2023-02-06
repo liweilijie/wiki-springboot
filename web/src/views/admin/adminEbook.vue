@@ -84,11 +84,13 @@ export default defineComponent({
       },
       {
         title: '分类一',
-        key: 'category1Id'
+        key: 'category1Id',
+        dataIndex: 'category1Id'
       },
       {
         title: '分类二',
-        key: 'category2Id'
+        key: 'category2Id',
+        dataIndex: 'category2Id'
       },
       {
         title: '文档数',
@@ -105,6 +107,7 @@ export default defineComponent({
       {
         title: 'Action',
         key: 'action',
+        dataIndex: 'action'
       }
     ];
 
@@ -146,10 +149,19 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      setTimeout(() => {
-        modalVisible.value = false;
-        modalLoading.value = false;
-      }, 2000);
+      axios.post("/ebook/save", ebook.value).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          modalVisible.value = false;
+          modalLoading.value = false;
+
+          // 重新加载列表数据
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        }
+      });
     };
     /**
      * 编辑

@@ -1,6 +1,6 @@
-package com.liwei.wiki.resp;
+package com.liwei.wiki.req;
 
-public class EbookResp {
+public class EbookSaveReq extends PageReq {
     private Long id;
 
     private String name;

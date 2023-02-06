@@ -5,8 +5,9 @@ import com.github.pagehelper.PageInfo;
 import com.liwei.wiki.domain.Ebook;
 import com.liwei.wiki.domain.EbookExample;
 import com.liwei.wiki.mapper.EbookMapper;
-import com.liwei.wiki.req.EbookReq;
-import com.liwei.wiki.resp.EbookResp;
+import com.liwei.wiki.req.EbookQueryReq;
+import com.liwei.wiki.req.EbookSaveReq;
+import com.liwei.wiki.resp.EbookQueryResp;
 import com.liwei.wiki.resp.PageResp;
 import com.liwei.wiki.util.CopyUtil;
 import org.slf4j.Logger;
@@ -25,7 +26,7 @@ public class EbookService {
     @Resource
     private EbookMapper ebookMapper;
 
-    public PageResp<EbookResp> list(EbookReq req) {
+    public PageResp<EbookQueryResp> list(EbookQueryReq req) {
         EbookExample ebookExample = new EbookExample();
         EbookExample.Criteria criteria = ebookExample.createCriteria();
         // 如果有 name 条件查询则进行 like 查询
@@ -57,11 +58,25 @@ public class EbookService {
 //        }
 
         // 列表复制
-        List<EbookResp> list = CopyUtil.copyList(ebookList, EbookResp.class);
-        PageResp<EbookResp> ebooksResp = new PageResp<>();
+        List<EbookQueryResp> list = CopyUtil.copyList(ebookList, EbookQueryResp.class);
+        PageResp<EbookQueryResp> ebooksResp = new PageResp<>();
         ebooksResp.setTotal(pageInfo.getTotal());
         ebooksResp.setList(list);
 
         return ebooksResp;
+    }
+
+    /**
+     * 保存
+     */
+    public void save(EbookSaveReq req) {
+        Ebook ebook = CopyUtil.copy(req, Ebook.class);
+        if (ObjectUtils.isEmpty(ebook.getId())) {
+            // 新增
+            ebookMapper.insert(ebook);
+        } else {
+            // 更新
+            ebookMapper.updateByPrimaryKey(ebook);
+        }
     }
 }
