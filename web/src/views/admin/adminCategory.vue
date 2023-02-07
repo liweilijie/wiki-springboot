@@ -141,6 +141,7 @@ export default defineComponent({
      */
     const handleQuery = () => {
       loading.value = true;
+      level1.value = []; // 使用之前要清空一次，不然会有缓存数据在里面。
       axios.get("/category/all").then((response) => {
         loading.value = false;
         const data = response.data;
