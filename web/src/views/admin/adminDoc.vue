@@ -184,6 +184,35 @@ export default defineComponent({
 
     // ------------- 表单 ----------------
     const doc = ref({});
+    const ids = ref();
+    ids.value = [];
+
+    const getDeleteIds = (treeSelectData: any, id: any) => {
+      // 遍历数组，即遍历某一层节点。
+      for (let i = 0; i < treeSelectData.length; i++) {
+        const node = treeSelectData[i];
+        if (node.id === id) {
+          // 如果当时节点就是目标节点
+          console.log("delete:", node);
+          // 将目标节点id 设置到 ids 进行删除
+          ids.value.push(id);
+
+          // 遍历所有子节点， 将所有子节点都将删除
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            for (let j = 0; j < children.length; j++) {
+              getDeleteIds(children, children[j].id)
+            }
+          }
+        } else {
+          // 如果当前节点不是目标节点，则到其子节点再找找看。
+          const children = node.children;
+          if (Tool.isNotEmpty(children)) {
+            getDeleteIds(children, id);
+          }
+        }
+      }
+    };
 
     const setDisable = (treeSelectData: any, id: any) => {
       // console.log(treeSelectData, id);
@@ -211,7 +240,7 @@ export default defineComponent({
           }
         }
       }
-    }
+    };
 
     const modalVisible = ref(false);
     const modalLoading = ref(false);
@@ -262,8 +291,13 @@ export default defineComponent({
       treeSelectData.value.unshift({id: 0, name: '无'});
     };
 
+    // 删除多个id: /doc/delete/1,2,3,4
     const handleDelete = (id: number) => {
-      axios.delete("/doc/delete/"+id).then((response) => {
+      // 这里要用 level1.value, 因为 treeSelectData 里面多了一个无
+      ids.value = [];
+      getDeleteIds(level1.value, id);
+      console.log("delete ids:", ids.value);
+      axios.delete("/doc/delete/"+ids.value.join(",")).then((response) => {
         const data = response.data;
         if (data.success) {
           // 重新加载列表数据

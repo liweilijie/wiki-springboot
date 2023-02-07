@@ -2,15 +2,17 @@ package com.liwei.wiki.controller;
 
 import com.liwei.wiki.req.DocQueryReq;
 import com.liwei.wiki.req.DocSaveReq;
-import com.liwei.wiki.resp.DocQueryResp;
 import com.liwei.wiki.resp.CommonResp;
+import com.liwei.wiki.resp.DocQueryResp;
 import com.liwei.wiki.resp.PageResp;
 import com.liwei.wiki.service.DocService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 // @Controller 返回一个页面
 @RestController // 返回一个字符串
@@ -42,10 +44,12 @@ public class DocController {
         return resp;
     }
 
-    @DeleteMapping("/delete/{id}")
-    public CommonResp delete(@PathVariable Long id) {
+    @DeleteMapping("/delete/{idStr}")
+    public CommonResp delete(@PathVariable String idStr) {
         CommonResp resp = new CommonResp<>();
-        docService.delete(id);
+        List<Long> list = Arrays.asList(idStr.split(",")).stream().map(s -> Long.parseLong(s.trim())).collect(Collectors.toList());
+
+        docService.delete(list);
         return resp;
     }
 }
