@@ -37,6 +37,10 @@ public class EbookService {
         if (!ObjectUtils.isEmpty(req.getName())) {
             criteria.andNameLike("%" + req.getName() + "%");
         }
+        // 如果有 二级分类 条件查询则进行 equal 查询, 在首页的时候需要用到。
+        if (!ObjectUtils.isEmpty(req.getCategory2Id())) {
+            criteria.andCategory2IdEqualTo(req.getCategory2Id());
+        }
         // PageHelper分页注意事项:
         // 第一页从1开始
         // 并且只能第一个遇到的查询语句生效. 所以紧跟查询语句

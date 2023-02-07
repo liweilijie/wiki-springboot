@@ -76,3 +76,13 @@ export default defineComponent({
 ```
 
  结果：![result](doc/category_result.png)
+ 
+## v-show
+**div** 和 **a-list** 互斥，用 `isShowWelcome` 变量来互斥，`const isShowWelcome = ref(true);`
+
+```vue
+<div class="welcome" v-show="isShowWelcome">
+<h1>欢迎来到电子书馆。</h1>
+</div>
+<a-list v-show="!isShowWelcome" ></a-list>
+```

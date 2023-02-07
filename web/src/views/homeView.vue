@@ -9,26 +9,26 @@
           @click="handleClick"
       >
         <a-menu-item key="welcome">
-          <router-link to="'/'">
             <MailOutlined />
             <span>欢迎</span>
-          </router-link>
         </a-menu-item>
         <a-sub-menu v-for="item in level1" :key="item.id">
           <template #title>
-            <span><user-outlined />{{item.name}}</span>
+            <span><user-outlined /> {{item.name}}</span>
           </template>
           <a-menu-item v-for="child in item.children" :key="child.id">
             <MailOutlined /><span>{{child.name}}</span>
           </a-menu-item>
         </a-sub-menu>
-        >
       </a-menu>
     </a-layout-sider>
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-list item-layout="vertical" size="large"  :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
+      <div class="welcome" v-show="isShowWelcome">
+        <h1>欢迎来到电子书馆。</h1>
+      </div>
+      <a-list v-show="!isShowWelcome" item-layout="vertical" size="large"  :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
         <template #renderItem="{ item }">
           <a-list-item key="item.name">
             <template #actions>
@@ -87,19 +87,29 @@ export default defineComponent({
       })
     };
 
-    const handleClick = () => {
+    const isShowWelcome = ref(true);
+    let category2Id = 0;
+
+    const handleClick = (value: any) => {
       console.log('handleClick');
+      if (value.key == 'welcome') {
+        isShowWelcome.value = true;
+      } else {
+        isShowWelcome.value = false;
+
+        // 将选中的分类值传给 category2Id
+        category2Id = value.key;
+        queryEbook(); // 重新再查询一次。
+      }
     }
 
-
-    onMounted(() => {
-      handleQueryCategorys();
-
+    const queryEbook = () => {
       // 这里应该用一个 /ebook/all 接口提供所有数据查询更妥当
       axios.get("/ebook/list", {
         params: {
           page: 1,
-          size: 1000
+          size: 1000,
+          category2Id: category2Id,
         }
       }).then((response) => {
         let data = response.data;
@@ -108,14 +118,19 @@ export default defineComponent({
         } else {
           message.error(data.message);
         }
-      })
+      });
+    };
+
+    onMounted(() => {
+      handleQueryCategorys();
     });
 
     return {
       ebooks,
       actions,
       level1,
-      handleClick
+      handleClick,
+      isShowWelcome
     }
   }
 });
