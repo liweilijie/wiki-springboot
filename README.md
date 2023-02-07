@@ -91,6 +91,8 @@ app.use(Antd);
 ```bash
 # 下载antd icon 库
 npm install --save @ant-design/icons-vue
+# 安装wangeditor 富文本
+npm install @wangeditor/editor --save
 ```
 
 在 `main.ts` 之中加载所有图标。
