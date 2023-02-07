@@ -89,8 +89,10 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, onMounted, ref } from "vue";
-import {message} from 'ant-design-vue';
+import {createVNode, defineComponent, onMounted, ref} from "vue";
+import {message, Modal} from 'ant-design-vue';
+import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
+
 import axios from 'axios';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
@@ -184,8 +186,9 @@ export default defineComponent({
 
     // ------------- 表单 ----------------
     const doc = ref({});
-    const ids = ref();
-    ids.value = [];
+
+    const deleteIds: Array<string> = [];
+    const deleteNames: Array<string> = [];
 
     const getDeleteIds = (treeSelectData: any, id: any) => {
       // 遍历数组，即遍历某一层节点。
@@ -195,7 +198,8 @@ export default defineComponent({
           // 如果当时节点就是目标节点
           console.log("delete:", node);
           // 将目标节点id 设置到 ids 进行删除
-          ids.value.push(id);
+          deleteIds.push(id);
+          deleteNames.push(node.name);
 
           // 遍历所有子节点， 将所有子节点都将删除
           const children = node.children;
@@ -293,17 +297,30 @@ export default defineComponent({
 
     // 删除多个id: /doc/delete/1,2,3,4
     const handleDelete = (id: number) => {
+      // 清空数组，否则多次删除时，数组会一直增加
+      deleteIds.length = 0;
+      deleteNames.length = 0;
       // 这里要用 level1.value, 因为 treeSelectData 里面多了一个无
-      ids.value = [];
       getDeleteIds(level1.value, id);
-      console.log("delete ids:", ids.value);
-      axios.delete("/doc/delete/"+ids.value.join(",")).then((response) => {
-        const data = response.data;
-        if (data.success) {
-          // 重新加载列表数据
-          handleQuery()
-        } else {
-          message.error(data.message);
+      console.log("delete ids:", deleteIds);
+      console.log("delete names:", deleteNames);
+
+      // 二次确认，将文档名称打印出来确认
+      Modal.confirm({
+        title: '重要提醒',
+        icon: createVNode(ExclamationCircleOutlined),
+        content: '将删除：【' + deleteNames.join("，") + "】删除后不可恢复，确认删除？",
+        onOk() {
+          // console.log(ids)
+          axios.delete("/doc/delete/" + deleteIds.join(",")).then((response) => {
+            const data = response.data; // data = commonResp
+            if (data.success) {
+              // 重新加载列表
+              handleQuery();
+            } else {
+              message.error(data.message);
+            }
+          });
         }
       });
     };
