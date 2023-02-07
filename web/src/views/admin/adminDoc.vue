@@ -77,7 +77,7 @@
             allow-clear
             tree-default-expand-all
             :tree-data="treeSelectData"
-            :replaceFields="{ label: 'name', value: 'id', key: 'id' }"
+            :fieldNames="{ label: 'name', value: 'id', key: 'id' }"
         >
         </a-tree-select>
       </a-form-item>
@@ -163,7 +163,7 @@ export default defineComponent({
     const handleQuery = () => {
       loading.value = true;
       level1.value = [];
-      axios.get("/doc/all").then((response) => {
+      axios.get("/doc/all/"+route.query.ebookId).then((response) => {
         loading.value = false;
         const data = response.data;
         if (data.success) {
