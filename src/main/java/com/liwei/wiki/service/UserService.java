@@ -4,6 +4,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.liwei.wiki.domain.User;
 import com.liwei.wiki.domain.UserExample;
+import com.liwei.wiki.exception.BusinessException;
+import com.liwei.wiki.exception.BusinessExceptionCode;
 import com.liwei.wiki.mapper.UserMapper;
 import com.liwei.wiki.req.UserQueryReq;
 import com.liwei.wiki.req.UserSaveReq;
@@ -14,6 +16,7 @@ import com.liwei.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -77,10 +80,17 @@ public class UserService {
         User user = CopyUtil.copy(req, User.class);
         if (ObjectUtils.isEmpty(user.getId())) {
             // 新增
-            user.setId(snowFlake.nextId());
-            userMapper.insert(user);
+            if (ObjectUtils.isEmpty(selectUserByLoginName(req.getLoginName()))) {
+                user.setId(snowFlake.nextId());
+                userMapper.insert(user);
+            } else {
+                // 登陆名已经存在
+                throw new BusinessException(BusinessExceptionCode.USER_LOGIN_NAME_EXIST);
+            }
         } else {
-            // 更新
+            // 更新, 不能更新用户名和密码
+            user.setLoginName(null);
+            user.setPassword(null);
             userMapper.updateByPrimaryKey(user);
         }
     }
@@ -90,5 +100,18 @@ public class UserService {
      */
     public void delete(Long id) {
         userMapper.deleteByPrimaryKey(id);
+    }
+
+    public User selectUserByLoginName(String loginName) {
+        UserExample userExample = new UserExample();
+        UserExample.Criteria criteria = userExample.createCriteria();
+        criteria.andLoginNameEqualTo(loginName);
+        List<User> users = userMapper.selectByExample(userExample);
+        if (CollectionUtils.isEmpty(users)) {
+            return null;
+        } else {
+            return users.get(0);
+        }
+
     }
 }
