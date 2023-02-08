@@ -90,7 +90,7 @@ public class UserService {
         } else {
             // 更新, 不能更新用户名和密码
             user.setLoginName(null);
-            user.setPassword(null);
+//            user.setPassword(null);
             userMapper.updateByPrimaryKey(user);
         }
     }

@@ -84,6 +84,9 @@ import {message} from 'ant-design-vue';
 import axios from 'axios';
 import {Tool} from "@/util/tool";
 
+declare let hexMd5: any;
+declare let KEY: any;
+
 export default defineComponent({
   name: 'AdminUser',
   setup() {
@@ -165,7 +168,10 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleModalOk = () => {
       modalLoading.value = true;
-      console.log('save user:', user.value);
+
+      // 前端将密码加密传到后端
+      user.value.password = hexMd5(user.value.password + KEY);
+
       axios.post("/user/save", user.value).then((response) => {
         modalLoading.value = false;
         const data = response.data;
