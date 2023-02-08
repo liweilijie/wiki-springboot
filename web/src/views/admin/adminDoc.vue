@@ -109,7 +109,7 @@
 </template>
 
 <script lang="ts">
-import {createVNode, defineComponent, onBeforeUnmount, onMounted, ref, shallowRef} from "vue";
+import {createVNode, defineComponent, onMounted, ref } from "vue";
 import {message, Modal} from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
 import axios from 'axios';
@@ -207,7 +207,10 @@ export default defineComponent({
 
     // ------------- 表单 ----------------
     const doc = ref();
-    doc.value = {};
+    // 刚一开始就把ebookId 给 doc 进行保存
+    doc.value = {
+      ebookId: route.query.ebookId
+    };
 
     const deleteIds: Array<string> = [];
     const deleteNames: Array<string> = [];
@@ -400,3 +403,10 @@ export default defineComponent({
   }
 })
 </script>
+
+<style scoped>
+img {
+  width: 50px;
+  height: 50px;
+}
+</style>
