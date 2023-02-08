@@ -3,99 +3,107 @@
     <a-layout-content
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
-      <a-form
-          layout="inline"
-          :model="param"
-      >
-        <a-form-item>
-          <a-input v-model:value="param.name" placeholder="分类名称" @keyup.enter="handleQuery()" >
-            <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
-          </a-input>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="handleQuery()">
-            查询
-          </a-button>
-        </a-form-item>
-        <a-form-item>
-          <a-button type="primary" @click="add()">
-            新增
-          </a-button>
-        </a-form-item>
-      </a-form>
-      <a-table
-        :columns="columns"
-        :row-key="record => record.id"
-        :data-source="level1"
-        :loading="loading"
-        :pagination="false"
-        >
-        <template #bodyCell="{ column, record }">
-          <template v-if="column.key === 'cover'">
-            <img :src="record.cover" alt="avatar" height="20" width="20" />
-          </template>
-          <template v-else-if="column.key === 'action'">
-            <a-space size="small">
-              <a-button type="primary" @click="edit(record)">
-                编辑
+      <a-row>
+        <a-col :span="8">
+          <a-form
+              layout="inline"
+              :model="param"
+          >
+            <a-form-item>
+              <a-input v-model:value="param.name" placeholder="分类名称" @keyup.enter="handleQuery()" >
+                <template #prefix><UserOutlined style="color: rgba(0, 0, 0, 0.25)" /></template>
+              </a-input>
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="handleQuery()">
+                查询
               </a-button>
-              <a-popconfirm
-                  title="删除后不可恢复，确认删除?"
-                  ok-text="是"
-                  cancel-text="否"
-                  @confirm="handleDelete(record.id)"
+            </a-form-item>
+            <a-form-item>
+              <a-button type="primary" @click="add()">
+                新增
+              </a-button>
+            </a-form-item>
+          </a-form>
+          <a-table
+              :columns="columns"
+              :row-key="record => record.id"
+              :data-source="level1"
+              :loading="loading"
+              :pagination="false"
+          >
+            <template #bodyCell="{ column, record }">
+              <template v-if="column.key === 'cover'">
+                <img :src="record.cover" alt="avatar" height="20" width="20" />
+              </template>
+              <template v-else-if="column.key === 'action'">
+                <a-space size="small">
+                  <a-button type="primary" @click="edit(record)">
+                    编辑
+                  </a-button>
+                  <a-popconfirm
+                      title="删除后不可恢复，确认删除?"
+                      ok-text="是"
+                      cancel-text="否"
+                      @confirm="handleDelete(record.id)"
+                  >
+                    <a-button type="danger">
+                      删除
+                    </a-button>
+                  </a-popconfirm>
+                </a-space>
+              </template>
+            </template>
+          </a-table>
+        </a-col>
+        <a-col :span="16">
+          <a-form :model="doc" :label-col="{span: 6}">
+            <a-form-item label="名称">
+              <a-input v-model:value="doc.name" />
+            </a-form-item>
+            <a-form-item label="名称">
+              <a-tree-select
+                  v-model:value="doc.parent"
+                  show-search
+                  style="width: 100%"
+                  :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
+                  placeholder="请选择父节点"
+                  allow-clear
+                  tree-default-expand-all
+                  :tree-data="treeSelectData"
+                  :fieldNames="{ label: 'name', value: 'id', key: 'id' }"
               >
-                <a-button type="danger">
-                  删除
-                </a-button>
-              </a-popconfirm>
-            </a-space>
-          </template>
-        </template>
-      </a-table>
-
+              </a-tree-select>
+            </a-form-item>
+            <a-form-item label="排序">
+              <a-input v-model:value="doc.sort" />
+            </a-form-item>
+            <a-form-item label="内容">
+              <div id="content"></div>
+            </a-form-item>
+          </a-form>
+        </a-col>
+      </a-row>
     </a-layout-content>
   </a-layout>
 
-  <a-modal
-      v-model:visible="modalVisible"
-      title="分类表单"
-      :confirm-loading="modalLoading"
-      @ok="handleModalOk"
-  >
-    <a-form :model="doc" :label-col="{span: 6}">
-      <a-form-item label="名称">
-        <a-input v-model:value="doc.name" />
-      </a-form-item>
-      <a-form-item label="名称">
-        <a-tree-select
-            v-model:value="doc.parent"
-            show-search
-            style="width: 100%"
-            :dropdown-style="{ maxHeight: '400px', overflow: 'auto' }"
-            placeholder="请选择父节点"
-            allow-clear
-            tree-default-expand-all
-            :tree-data="treeSelectData"
-            :fieldNames="{ label: 'name', value: 'id', key: 'id' }"
-        >
-        </a-tree-select>
-      </a-form-item>
-      <a-form-item label="排序">
-        <a-input v-model:value="doc.sort" />
-      </a-form-item>
-    </a-form>
-  </a-modal>
+<!--  <a-modal-->
+<!--      v-model:visible="modalVisible"-->
+<!--      title="分类表单"-->
+<!--      :confirm-loading="modalLoading"-->
+<!--      @ok="handleModalOk"-->
+<!--  >-->
+<!--  </a-modal>-->
 </template>
 
 <script lang="ts">
-import {createVNode, defineComponent, onMounted, ref} from "vue";
+import {createVNode, defineComponent, onBeforeUnmount, onMounted, ref, shallowRef} from "vue";
 import {message, Modal} from 'ant-design-vue';
 import { ExclamationCircleOutlined } from '@ant-design/icons-vue';
-
 import axios from 'axios';
 import {Tool} from "@/util/tool";
 import {useRoute} from "vue-router";
+import E from "wangeditor"
 
 export default defineComponent({
   name: 'AdminDoc',
@@ -189,6 +197,8 @@ export default defineComponent({
 
     const deleteIds: Array<string> = [];
     const deleteNames: Array<string> = [];
+    let editor: E;
+
 
     const getDeleteIds = (treeSelectData: any, id: any) => {
       // 遍历数组，即遍历某一层节点。
@@ -326,7 +336,10 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      handleQuery()
+      handleQuery();
+      editor = new E('#content');
+      editor.config.zIndex = 0;
+      editor.create();
     });
 
     return {
