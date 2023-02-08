@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 import HomeView from '../views/homeView.vue'
 import AdminEbook from '../views/admin/adminEbook.vue'
+import AdminUser from '../views/admin/adminUser.vue'
 import AdminCategory from '../views/admin/adminCategory.vue'
 import AdminDoc from '../views/admin/adminDoc.vue'
 import DocView from '../views/docView.vue'
@@ -18,6 +19,11 @@ const routes: Array<RouteRecordRaw> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/aboutView.vue')
+  },
+  {
+    path: '/admin/user',
+    name: 'user',
+    component: AdminUser
   },
   {
     path: '/admin/ebook',
