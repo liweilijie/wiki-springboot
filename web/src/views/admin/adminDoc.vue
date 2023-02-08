@@ -26,12 +26,14 @@
             </a-form-item>
           </a-form>
           <a-table
+              v-if="level1 !== undefined && level1.length > 0"
               :columns="columns"
               :row-key="record => record.id"
               :data-source="level1"
               :loading="loading"
               :pagination="false"
               size="small"
+              :defaultExpandAllRows="true"
           >
             <template #bodyCell="{ column, record }">
               <template v-if="column.key === 'cover'">
@@ -169,6 +171,7 @@ export default defineComponent({
      * }]
      */
     const level1 = ref(); // 一级分类树, children属性就是二级分类
+    level1.value = [];
 
     // 因为树选择组件的属性状态，会随当前编辑的节点而变化，所以单独声明一个响应式变量
     const treeSelectData = ref();

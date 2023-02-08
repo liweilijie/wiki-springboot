@@ -80,6 +80,27 @@ export default defineComponent({
 ## v-show
 **div** 和 **a-list** 互斥，用 `isShowWelcome` 变量来互斥，`const isShowWelcome = ref(true);`
 
+## table expands
+table 有个 `defaultExpandAllRows` 属性，但是当最开始的时候，`level1`还没有读取完成数据，所以也没有什么可以展开的，所以我们要判断当 level1有数据之后才进行展开，
+但是在定义 level1的时候要是空的值(null)被用到 length 就会报错，这时候可以判断一下 `undefined` 或者定义之后给个空数组。
+```js
+  const level1 = ref();
+  level1.value = [];
+```
+前端写法：
+```vue
+      <a-table
+        v-if="level1 !== undefined && level1.length > 0"
+        :columns="columns"
+        :row-key="record => record.id"
+        :data-source="level1"
+        :loading="loading"
+        :pagination="false"
+        size="small"
+        :defaultExpandAllRows="true"
+      >
+```
+
 ```vue
 <div class="welcome" v-show="isShowWelcome">
 <h1>欢迎来到电子书馆。</h1>
