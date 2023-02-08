@@ -21,6 +21,9 @@ public class DocSaveReq {
 
     private Integer voteCount;
 
+    @NotNull(message = "【内容】不能为空")
+    private String content;
+
     public Long getId() {
         return id;
     }
@@ -77,20 +80,26 @@ public class DocSaveReq {
         this.voteCount = voteCount;
     }
 
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", id=").append(id);
+        final StringBuffer sb = new StringBuffer("DocSaveReq{");
+        sb.append("id=").append(id);
         sb.append(", ebookId=").append(ebookId);
         sb.append(", parent=").append(parent);
-        sb.append(", name=").append(name);
+        sb.append(", name='").append(name).append('\'');
         sb.append(", sort=").append(sort);
         sb.append(", viewCount=").append(viewCount);
         sb.append(", voteCount=").append(voteCount);
-        sb.append("]");
+        sb.append(", content='").append(content).append('\'');
+        sb.append('}');
         return sb.toString();
     }
 }

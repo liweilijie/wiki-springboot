@@ -2,8 +2,10 @@ package com.liwei.wiki.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.liwei.wiki.domain.Content;
 import com.liwei.wiki.domain.Doc;
 import com.liwei.wiki.domain.DocExample;
+import com.liwei.wiki.mapper.ContentMapper;
 import com.liwei.wiki.mapper.DocMapper;
 import com.liwei.wiki.req.DocQueryReq;
 import com.liwei.wiki.req.DocSaveReq;
@@ -26,6 +28,9 @@ public class DocService {
 
     @Resource
     private DocMapper docMapper;
+
+    @Resource
+    private ContentMapper contentMapper;
 
     @Resource
     private SnowFlake snowFlake;
@@ -83,13 +88,26 @@ public class DocService {
      */
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
+        Content c = CopyUtil.copy(req, Content.class);
         if (ObjectUtils.isEmpty(doc.getId())) {
             // 新增
             doc.setId(snowFlake.nextId());
+            doc.setViewCount(0);
+            doc.setVoteCount(0);
             docMapper.insert(doc);
+
+            // 将上面生成的 id 赋值给 content 再插入
+            c.setId(doc.getId());
+            contentMapper.insert(c);
+
         } else {
             // 更新
             docMapper.updateByPrimaryKey(doc);
+            // 这里如果更新失败即说明数据库里面还没有，需要 insert
+            int count = contentMapper.updateByPrimaryKeyWithBLOBs(c);
+            if (count == 0) {
+                contentMapper.insert(c);
+            }
         }
     }
 
@@ -105,5 +123,14 @@ public class DocService {
         DocExample.Criteria criteria = docExample.createCriteria();
         criteria.andIdIn(ids);
         docMapper.deleteByExample(docExample);
+    }
+
+    public String findContent(Long id) {
+        Content content = contentMapper.selectByPrimaryKey(id);
+        if (ObjectUtils.isEmpty(content)) {
+            return "";
+        } else {
+            return content.getContent();
+        }
     }
 }

@@ -206,7 +206,8 @@ export default defineComponent({
     };
 
     // ------------- 表单 ----------------
-    const doc = ref({});
+    const doc = ref();
+    doc.value = {};
 
     const deleteIds: Array<string> = [];
     const deleteNames: Array<string> = [];
@@ -273,11 +274,14 @@ export default defineComponent({
     const modalLoading = ref(false);
     const handleSave = () => {
       modalLoading.value = true;
+      doc.value.content = editor.txt.html();
+
       axios.post("/doc/save", doc.value).then((response) => {
         modalLoading.value = false;
         const data = response.data;
         if (data.success) {
-          modalVisible.value = false;
+          message.success("保存成功！");
+          // modalVisible.value = false;
 
           // 重新加载列表数据
           handleQuery();
@@ -286,13 +290,30 @@ export default defineComponent({
         }
       });
     };
+
+    const handleQueryContent = () => {
+      axios.get("/doc/find-content/"+doc.value.id).then((response) => {
+        const data = response.data;
+        if (data.success) {
+          editor.txt.html(data.content);
+        } else {
+          message.error(data.message);
+        }
+      })
+    };
+
+
     /**
      * 编辑
      */
     const edit = (record: any) => {
+      // 清空富文本
+      editor.txt.html("");
       modalVisible.value = true;
       // 在编辑的时候"复制对象"出来编辑，这样才不会影响响应式数据
       doc.value = Tool.copy(record);
+      // 查询富文本内容
+      handleQueryContent();
 
       // 不能选择当前节点及其所有子孙节点，作为父节点，会使树断开
       treeSelectData.value = Tool.copy(level1.value);
@@ -306,6 +327,9 @@ export default defineComponent({
      *  新增
      */
     const add = () => {
+      // 清空富文本
+      editor.txt.html("");
+
       modalVisible.value = true;
       // 只有在新增时需要传入 ebookId, 在编辑时由数据库查询出来的有完事的 ebookId
       doc.value = {
