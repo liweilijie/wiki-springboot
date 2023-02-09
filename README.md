@@ -107,6 +107,24 @@ for (const i in icons) {
 ```
 
 
+## 单点登录 token 与 jwt 介绍
+登录:
+- 前端输入用户名密码
+- 校验用户名密码
+- 生成 token
+- 后端保存 token(redis)
+- 前端保存 token
+
+校验：
+- 前端请求时，带上 token( 放在 header)
+- 登录拦截器，校验token(到redis 获取 token)
+- 校验成功则继续后面的业务
+- 校验失败则回到登录页面
+
+token 与 jwt:
+- token+redis 的组合
+- jwt: token 是有意义的，加密的，包含业务信息，不用存储到 redis
+ 
 ## from
 参考的一些文档知识:
 

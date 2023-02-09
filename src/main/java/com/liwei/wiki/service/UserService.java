@@ -7,9 +7,11 @@ import com.liwei.wiki.domain.UserExample;
 import com.liwei.wiki.exception.BusinessException;
 import com.liwei.wiki.exception.BusinessExceptionCode;
 import com.liwei.wiki.mapper.UserMapper;
+import com.liwei.wiki.req.UserLoginReq;
 import com.liwei.wiki.req.UserQueryReq;
 import com.liwei.wiki.req.UserResetPasswordReq;
 import com.liwei.wiki.req.UserSaveReq;
+import com.liwei.wiki.resp.UserLoginResp;
 import com.liwei.wiki.resp.UserQueryResp;
 import com.liwei.wiki.resp.PageResp;
 import com.liwei.wiki.util.CopyUtil;
@@ -121,5 +123,23 @@ public class UserService {
             return users.get(0);
         }
 
+    }
+
+    public UserLoginResp login(UserLoginReq req) {
+        User userDb = selectUserByLoginName(req.getLoginName());
+        if (ObjectUtils.isEmpty(userDb)) {
+            // 用户名不存在
+            log.info("用户名不存在, {}", req.getLoginName());
+            throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+        } else {
+            if (userDb.getPassword().equals(req.getPassword())) {
+                // 登录成功
+                return CopyUtil.copy(userDb, UserLoginResp.class);
+            } else {
+                // 密码不正确
+                log.info("密码不对, 输入密码：{}, 数据库密码：{}", req.getPassword(), userDb.getPassword());
+                throw new BusinessException(BusinessExceptionCode.LOGIN_USER_ERROR);
+            }
+        }
     }
 }
