@@ -90,8 +90,9 @@ public class UserService {
         } else {
             // 更新, 不能更新用户名和密码
             user.setLoginName(null);
-//            user.setPassword(null);
-            userMapper.updateByPrimaryKey(user);
+            user.setPassword(null);
+            // userMapper.updateByPrimaryKey(user); // 不能用这个方法
+            userMapper.updateByPrimaryKeySelective(user); // 只能用这个方法
         }
     }
 
