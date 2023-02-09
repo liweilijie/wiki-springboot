@@ -37,6 +37,9 @@
           </template>
           <template v-else-if="column.key === 'action'">
             <a-space size="small">
+              <a-button type="primary" @click="resetPassword(record)">
+                重置密码
+              </a-button>
               <a-button type="primary" @click="edit(record)">
                 编辑
               </a-button>
@@ -72,6 +75,20 @@
         <a-input v-model:value="user.name" />
       </a-form-item>
       <a-form-item label="密码" v-show="!user.id">
+        <a-input v-model:value="user.password" />
+      </a-form-item>
+    </a-form>
+  </a-modal>
+
+
+  <a-modal
+      v-model:visible="resetModalVisible"
+      title="重置密码表单"
+      :confirm-loading="resetModalLoading"
+      @ok="handleResetPasswordOk"
+  >
+    <a-form :model="user" :label-col="{span: 6}">
+      <a-form-item label="新密码" >
         <a-input v-model:value="user.password" />
       </a-form-item>
     </a-form>
@@ -222,6 +239,42 @@ export default defineComponent({
       });
     };
 
+    // ------------- 重置密码 ----------------
+    const resetModalVisible = ref(false);
+    const resetModalLoading = ref(false);
+    const handleResetPasswordOk = () => {
+      resetModalLoading.value = true;
+
+      // 前端将密码加密传到后端
+      user.value.password = hexMd5(user.value.password + KEY);
+
+      axios.post("/user/reset-password", user.value).then((response) => {
+        resetModalLoading.value = false;
+        const data = response.data;
+        if (data.success) {
+          resetModalVisible.value = false;
+
+          // 重新加载列表数据
+          handleQuery({
+            page: pagination.value.current,
+            size: pagination.value.pageSize,
+          });
+        } else {
+          message.error(data.message);
+        }
+      });
+    };
+
+    /**
+     * 编辑
+     */
+    const resetPassword = (record: any) => {
+      resetModalVisible.value = true;
+      // 在编辑的时候"复制对象"出来编辑，这样才不会影响响应式数据
+      user.value = Tool.copy(record);
+      user.value.password = null;
+    };
+
     onMounted(() => {
       handleQuery({
         page: 1,
@@ -247,6 +300,12 @@ export default defineComponent({
       edit,
       add,
       handleDelete,
+
+      // resetPassword
+      resetModalLoading,
+      resetModalVisible,
+      resetPassword,
+      handleResetPasswordOk,
     }
   }
 })

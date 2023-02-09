@@ -8,6 +8,7 @@ import com.liwei.wiki.exception.BusinessException;
 import com.liwei.wiki.exception.BusinessExceptionCode;
 import com.liwei.wiki.mapper.UserMapper;
 import com.liwei.wiki.req.UserQueryReq;
+import com.liwei.wiki.req.UserResetPasswordReq;
 import com.liwei.wiki.req.UserSaveReq;
 import com.liwei.wiki.resp.UserQueryResp;
 import com.liwei.wiki.resp.PageResp;
@@ -95,6 +96,11 @@ public class UserService {
             userMapper.updateByPrimaryKeySelective(user); // 只能用这个方法
             // update user SET `name` = ? where id = ? 只会更新昵称
         }
+    }
+
+    public void resetPassword(UserResetPasswordReq req) {
+        User user = CopyUtil.copy(req, User.class);
+        userMapper.updateByPrimaryKeySelective(user); // 只能用这个方法
     }
 
     /**

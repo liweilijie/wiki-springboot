@@ -1,6 +1,7 @@
 package com.liwei.wiki.controller;
 
 import com.liwei.wiki.req.UserQueryReq;
+import com.liwei.wiki.req.UserResetPasswordReq;
 import com.liwei.wiki.req.UserSaveReq;
 import com.liwei.wiki.resp.CommonResp;
 import com.liwei.wiki.resp.UserQueryResp;
@@ -34,6 +35,15 @@ public class UserController {
         userService.save(req);
         return resp;
     }
+
+    @PostMapping("/reset-password")
+    public CommonResp resetPassword(@Valid @RequestBody UserResetPasswordReq req) {
+        req.setPassword(DigestUtils.md5DigestAsHex(req.getPassword().getBytes()));
+        CommonResp resp = new CommonResp<>();
+        userService.resetPassword(req);
+        return resp;
+    }
+
 
     @DeleteMapping("/delete/{id}")
     public CommonResp delete(@PathVariable Long id) {
