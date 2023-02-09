@@ -93,6 +93,7 @@ public class UserService {
             user.setPassword(null);
             // userMapper.updateByPrimaryKey(user); // 不能用这个方法
             userMapper.updateByPrimaryKeySelective(user); // 只能用这个方法
+            // update user SET `name` = ? where id = ? 只会更新昵称
         }
     }
 
