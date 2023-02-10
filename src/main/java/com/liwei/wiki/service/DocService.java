@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.liwei.wiki.domain.Content;
 import com.liwei.wiki.domain.Doc;
 import com.liwei.wiki.domain.DocExample;
+import com.liwei.wiki.exception.BusinessException;
+import com.liwei.wiki.exception.BusinessExceptionCode;
 import com.liwei.wiki.mapper.ContentMapper;
 import com.liwei.wiki.mapper.DocMapper;
 import com.liwei.wiki.mapper.DocMapperCust;
@@ -13,6 +15,8 @@ import com.liwei.wiki.req.DocSaveReq;
 import com.liwei.wiki.resp.DocQueryResp;
 import com.liwei.wiki.resp.PageResp;
 import com.liwei.wiki.util.CopyUtil;
+import com.liwei.wiki.util.RedisUtil;
+import com.liwei.wiki.util.RequestContext;
 import com.liwei.wiki.util.SnowFlake;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +42,9 @@ public class DocService {
 
     @Resource
     private SnowFlake snowFlake;
+
+    @Resource
+    private RedisUtil redisUtil;
 
     public PageResp<DocQueryResp> list(DocQueryReq req) {
         DocExample docExample = new DocExample();
@@ -140,5 +147,25 @@ public class DocService {
         } else {
             return content.getContent();
         }
+    }
+
+    /**
+     * 点赞
+     */
+    public void vote(Long id) {
+        // docMapperCust.increaseVoteCount(id);
+        // 远程IP+doc.id作为key，24小时内不能重复
+        String ip = RequestContext.getRemoteAddr();
+        if (redisUtil.validateRepeat("DOC_VOTE_" + id + "_" + ip, 5000)) {
+            docMapperCust.increaseVoteCount(id);
+        } else {
+            throw new BusinessException(BusinessExceptionCode.VOTE_REPEAT);
+        }
+
+        // 推送消息
+//        Doc docDb = docMapper.selectByPrimaryKey(id);
+//        String logId = MDC.get("LOG_ID");
+//        wsService.sendInfo("【" + docDb.getName() + "】被点赞！", logId);
+        // rocketMQTemplate.convertAndSend("VOTE_TOPIC", "【" + docDb.getName() + "】被点赞！");
     }
 }

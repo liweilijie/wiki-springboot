@@ -2,6 +2,8 @@ package com.liwei.wiki.aspect;
 
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.support.spring.PropertyPreFilters;
+import com.liwei.wiki.util.RequestContext;
+import com.liwei.wiki.util.SnowFlake;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -11,11 +13,13 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +31,17 @@ public class LogAspect {
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
 
     /** 定义一个切点 */
-    @Pointcut("execution(public * com.liwei.*.controller..*Controller.*(..))")
+    @Pointcut("execution(public * com.jiawa.*.controller..*Controller.*(..))")
     public void controllerPointcut() {}
+
+    @Resource
+    private SnowFlake snowFlake;
 
     @Before("controllerPointcut()")
     public void doBefore(JoinPoint joinPoint) throws Throwable {
+
+        // 增加日志流水号
+        MDC.put("LOG_ID", String.valueOf(snowFlake.nextId()));
 
         // 开始打印请求日志
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
@@ -45,11 +55,13 @@ public class LogAspect {
         LOG.info("类名方法: {}.{}", signature.getDeclaringTypeName(), name);
         LOG.info("远程地址: {}", request.getRemoteAddr());
 
+        RequestContext.setRemoteAddr(getRemoteIp(request)); // 请求进来先获取远程 ip 地址
+
         // 打印请求参数
         Object[] args = joinPoint.getArgs();
-        // LOG.info("请求参数: {}", JSONObject.toJSONString(args));
+		// LOG.info("请求参数: {}", JSONObject.toJSONString(args));
 
-        Object[] arguments  = new Object[args.length];
+		Object[] arguments  = new Object[args.length];
         for (int i = 0; i < args.length; i++) {
             if (args[i] instanceof ServletRequest
                     || args[i] instanceof ServletResponse
