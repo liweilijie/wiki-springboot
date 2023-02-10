@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 
 import javax.annotation.Resource;
@@ -101,6 +102,7 @@ public class DocService {
     /**
      * 保存
      */
+    @Transactional // 操作两张表需要做事务操作，增加这个就能事务，不能在同一个类里面调用。
     public void save(DocSaveReq req) {
         Doc doc = CopyUtil.copy(req, Doc.class);
         Content c = CopyUtil.copy(req, Content.class);
