@@ -7,11 +7,17 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@ComponentScan({"com.liwei", "com.test"}) // 扩大扫描的路径,增加多个包路径
 @ComponentScan("com.liwei") // 扩大扫描的路径
 @SpringBootApplication
 @MapperScan("com.liwei.wiki.mapper") // 让mybatis 扫描mapper
+// Schedule 启用定时任务
+// 启动定时器,所有定时器都是在一个线程里面做的，所以会错过，错过了就错过了不会再执行了。
+// 比较好的可以用 quartz 定时任务框架。
+// 在线 cron 表达式里面去生成表达式，不用去记。
+@EnableScheduling
 public class WikiApplication {
 	private static final Logger log = LoggerFactory.getLogger(WikiApplication.class);
 	public static void main(String[] args) {
