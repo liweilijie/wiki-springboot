@@ -86,6 +86,7 @@ create table `user` (
 ) engine=innodb default charset=utf8mb4 comment='用户';
 
 insert into `user` (id, `login_name`, `name`, `password`) values (1, 'test', '测试', 'e70e2222a9d67c4f2eae107533359aa4');
+insert into `user` (id, `login_name`, `name`, `password`) values (9, 'admin', '管理员', 'a36280cf624505470a88347c10391769');
 
 
 -- 更新文档操作 自定义 SQL
