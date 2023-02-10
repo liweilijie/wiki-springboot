@@ -7,6 +7,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 //@ComponentScan({"com.liwei", "com.test"}) // 扩大扫描的路径,增加多个包路径
@@ -18,6 +19,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 // 比较好的可以用 quartz 定时任务框架。
 // 在线 cron 表达式里面去生成表达式，不用去记。
 @EnableScheduling
+@EnableAsync // 异步化，另外启动一个线程来执行异步的内容
 public class WikiApplication {
 	private static final Logger log = LoggerFactory.getLogger(WikiApplication.class);
 	public static void main(String[] args) {
