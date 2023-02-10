@@ -7,6 +7,7 @@ import com.liwei.wiki.domain.Doc;
 import com.liwei.wiki.domain.DocExample;
 import com.liwei.wiki.mapper.ContentMapper;
 import com.liwei.wiki.mapper.DocMapper;
+import com.liwei.wiki.mapper.DocMapperCust;
 import com.liwei.wiki.req.DocQueryReq;
 import com.liwei.wiki.req.DocSaveReq;
 import com.liwei.wiki.resp.DocQueryResp;
@@ -31,6 +32,9 @@ public class DocService {
 
     @Resource
     private ContentMapper contentMapper;
+
+    @Resource
+    private DocMapperCust docMapperCust;
 
     @Resource
     private SnowFlake snowFlake;
@@ -92,8 +96,8 @@ public class DocService {
         if (ObjectUtils.isEmpty(doc.getId())) {
             // 新增
             doc.setId(snowFlake.nextId());
-            doc.setViewCount(0);
-            doc.setVoteCount(0);
+            doc.setViewCount(0); // 不然会有 null 的情况
+            doc.setVoteCount(0); // 有null 的情况会在 update 的时候失败
             docMapper.insert(doc);
 
             // 将上面生成的 id 赋值给 content 再插入
@@ -127,6 +131,10 @@ public class DocService {
 
     public String findContent(Long id) {
         Content content = contentMapper.selectByPrimaryKey(id);
+
+        Integer updateCount = docMapperCust.increaseViewCount(id);
+        log.info("更新阅读数：{}", updateCount);
+
         if (ObjectUtils.isEmpty(content)) {
             return "";
         } else {
