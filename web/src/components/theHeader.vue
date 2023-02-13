@@ -71,7 +71,7 @@ declare let hexMd5: any;
 declare let KEY: any;
 
 export default defineComponent({
-  name: 'the-header',
+  name: 'theHeader',
   setup() {
     // 登录后保存
     const user = computed(() => store.state.user);
@@ -145,7 +145,7 @@ export default defineComponent({
 }
 
 .login-menu {
-  float: right;
+  float: right !important;
   color: white;
   padding-left: 10px;
 }
