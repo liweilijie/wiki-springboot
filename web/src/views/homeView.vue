@@ -26,7 +26,7 @@
         :style="{ background: '#fff', padding: '24px', margin: 0, minHeight: '280px' }"
     >
       <div class="welcome" v-show="isShowWelcome">
-        <h1>欢迎来到电子书馆。</h1>
+        <the-welcome></the-welcome>
       </div>
       <a-list v-show="!isShowWelcome" item-layout="vertical" size="large"  :grid="{ gutter: 20, column: 3 }" :data-source="ebooks">
         <template #renderItem="{ item }">
@@ -65,6 +65,8 @@ import {defineComponent, onMounted, ref } from 'vue';
 import {message} from 'ant-design-vue';
 import axios from 'axios';
 import {Tool} from "@/util/tool";
+import TheWelcome from '@/components/theWelcome.vue';
+
 const ebooks = ref();
 
 const actions: Record<string, string>[] = [
@@ -75,6 +77,9 @@ const actions: Record<string, string>[] = [
 
 export default defineComponent({
   name: 'HomeView',
+  components: {
+    TheWelcome
+  },
   setup() {
     const level1 = ref();
     let categorys: any; //内部用的普通变量

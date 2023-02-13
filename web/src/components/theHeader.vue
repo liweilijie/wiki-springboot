@@ -1,6 +1,6 @@
 <template>
   <a-layout-header class="header">
-    <div class="logo"/>
+    <div class="logo">不多知识库</div>
     <a-menu
         theme="dark"
         mode="horizontal"
@@ -78,8 +78,8 @@ export default defineComponent({
 
     // 用来登录
     const loginUser = ref({
-      loginName: "sbso129129",
-      password: "sbso129129"
+      loginName: "admin",
+      password: "admin123"
     });
     const loginModalVisible = ref(false);
     const loginModalLoading = ref(false);
