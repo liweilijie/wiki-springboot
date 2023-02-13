@@ -125,6 +125,10 @@ token 与 jwt:
 - token+redis 的组合
 - jwt: token 是有意义的，加密的，包含业务信息，不用存储到 redis
  
+
+## 统计相关的
+
+ 
 ## from
 参考的一些文档知识:
 
